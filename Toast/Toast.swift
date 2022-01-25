@@ -478,8 +478,16 @@ public extension UIView {
             let maxMessageSize = CGSize(width: (self.bounds.size.width * style.maxWidthPercentage) - imageRect.size.width, height: self.bounds.size.height * style.maxHeightPercentage)
             let messageSize = messageLabel?.sizeThatFits(maxMessageSize)
             if let messageSize = messageSize {
-                let actualWidth = min(messageSize.width, maxMessageSize.width)
+                var actualWidth = min(messageSize.width, maxMessageSize.width)
                 let actualHeight = min(messageSize.height, maxMessageSize.height)
+                if imageRect.width == 0 {
+                    if title == nil {
+                        messageLabel?.textAlignment = .center
+                        if actualWidth < style.singleMessageTextMinWidth {
+                            actualWidth = style.singleMessageTextMinWidth
+                        }
+                    }
+                }
                 messageLabel?.frame = CGRect(x: 0.0, y: 0.0, width: actualWidth, height: actualHeight)
             }
         }
@@ -565,7 +573,7 @@ public struct ToastStyle {
      A percentage value from 0.0 to 1.0, representing the maximum width of the toast
      view relative to it's superview. Default is 0.8 (80% of the superview's width).
     */
-    public var maxWidthPercentage: CGFloat = 0.8 {
+    public var maxWidthPercentage: CGFloat = 0.6 {
         didSet {
             maxWidthPercentage = max(min(maxWidthPercentage, 1.0), 0.0)
         }
@@ -587,7 +595,7 @@ public struct ToastStyle {
      Default is 10.0.
      
     */
-    public var horizontalPadding: CGFloat = 10.0
+    public var horizontalPadding: CGFloat = 16.0
     
     /**
      The spacing from the vertical edge of the toast view to the content. When a title
@@ -595,7 +603,7 @@ public struct ToastStyle {
      Default is 10.0. On iOS11+, this value is added added to the `safeAreaInset.top`
      and `safeAreaInsets.bottom`.
     */
-    public var verticalPadding: CGFloat = 10.0
+    public var verticalPadding: CGFloat = 12.0
     
     /**
      The corner radius. Default is 10.0.
@@ -686,7 +694,13 @@ public struct ToastStyle {
     /**
      Activity background color. Default is `.black` at 80% opacity.
      */
-    public var activityBackgroundColor: UIColor = UIColor.black.withAlphaComponent(0.8)
+    public var activityBackgroundColor: UIColor = UIColor.black.withAlphaComponent(0.7)
+    
+    /**
+     纯文本提示时 视图的最小宽度
+     */
+    public var singleMessageTextMinWidth: CGFloat = 96.0
+    
     
 }
 
